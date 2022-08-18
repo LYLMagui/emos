@@ -31,3 +31,19 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### STS ###
+
+
+### IntelliJ IDEA ###
+
+.mvn
+mvnw*
+
+### NetBeans ###
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
