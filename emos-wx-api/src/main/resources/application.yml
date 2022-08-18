@@ -75,5 +75,25 @@ spring:
       username: admin
       password: abc123456
 
+# 配置Mybatis
+mybatis:
+  # meapper映射文件的路径
+  mapper-locations: classpath*:mapper/*.xml
+  # 实体映射类的路径
+  type-aliases-package: com.ukir.emos.wx.db.pojo
+  configuration:
+    # 日志输出策略
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # 让Mybatis支持驼峰命名
+    map-underscore-to-camel-case: true
 
-
+# 配置日志输出
+logging:
+  # 日志输出级别
+  level:
+    root: info
+    # dao接口的日志级别为警告
+    com.ukir.emos.wx.db.dao: warn
+  pattern:
+    # 输出的日志格式
+    console: "%d{HH:mm:ss} %-5level %msg%n"
