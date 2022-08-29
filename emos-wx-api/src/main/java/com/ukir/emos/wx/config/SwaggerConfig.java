@@ -23,7 +23,7 @@ import java.util.List;
 public class SwaggerConfig {
     @Bean
     public Docket docket() {
-        Docket docket =  new Docket(DocumentationType.OAS_30)
+        Docket docket = new Docket(DocumentationType.OAS_30)
                 .apiInfo(apiInfo()).enable(true)
                 .select()
                 //apis：扫描包路径，提取API接口,只有使用了@ApiOperation的方法才可以添加到文档
@@ -39,7 +39,7 @@ public class SwaggerConfig {
             keyname:键名 描述信息
             passAS：接收令牌的位置
          */
-        ApiKey apiKey = new ApiKey("token","token","header");
+        ApiKey apiKey = new ApiKey("token", "token", "header");
 
         //将apiKey封装到List里
         List<SecurityScheme> apiKeyList = new ArrayList<>();
@@ -53,9 +53,9 @@ public class SwaggerConfig {
                 scope：范围 global是全局
                 description：描述
          */
-        AuthorizationScope scope = new AuthorizationScope("global","accessEverything");
+        AuthorizationScope scope = new AuthorizationScope("global", "accessEverything");
         AuthorizationScope[] scopes = {scope};
-        SecurityReference reference = new SecurityReference("token",scopes);
+        SecurityReference reference = new SecurityReference("token", scopes);
         //再次封装
         List refList = new ArrayList();
         refList.add(reference);
@@ -73,7 +73,7 @@ public class SwaggerConfig {
                 .title("EMOS在线办公系统")
                 //文档描述
                 .description("用于测试后端返回接口")
-                .contact(new Contact("ukir","http://localhost:8080","2416053677"))
+                .contact(new Contact("ukir", "http://localhost:8080", "2416053677"))
                 .version("v1.0")
                 .build();
     }

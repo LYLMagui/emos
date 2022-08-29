@@ -97,3 +97,12 @@ logging:
   pattern:
     # 输出的日志格式
     console: "%d{HH:mm:ss} %-5level %msg%n"
+
+emos:
+  jwt:
+    # 秘钥
+    secret: abc123456
+    #令牌过期时间（天）
+    expire: 5
+    # 令牌缓存时间（天）
+    cache-expire: 10
