@@ -25,17 +25,17 @@ public class JwtUtil {
      * springfarmework包下的Value注解
      * 作用：读取yml文件内的属性注入到变量中
      * */
-    @Value("$(emos.jwt.secret)") //注入配置文件中的秘钥
+    @Value("${emos.jwt.secret}") //注入配置文件中的秘钥
     private String secret;
 
     //令牌过期时间
-    @Value("$(emos.jwt.expire)")
+    @Value("${emos.jwt.expire}")
     private int expire;
 
     //创建令牌 获取userId
-    private String createToken(int userId) {
+    public String createToken(int userId) {
         //日期偏移，token在当前日期的五天后失效
-        Date date = DateUtil.offset(new Date(), DateField.DAY_OF_YEAR, 5);
+        Date date = DateUtil.offset(new Date(), DateField.DAY_OF_YEAR, expire);
         //创建加密算法对象
         Algorithm algorithm = Algorithm.HMAC256(secret); // 传入秘钥
         //执行加密
