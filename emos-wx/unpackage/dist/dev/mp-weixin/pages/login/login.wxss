@@ -1,0 +1,47 @@
+/* 登录页面Logo */
+.logo {
+  width: 70%;
+  margin: 30% auto 0 auto;
+  display: block;
+}
+.logo-title {
+  font-size: 48rpx;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 8%;
+  color: #333;
+}
+.logo-subtitle {
+  font-size: 34rpx;
+  text-align: center;
+  color: #333;
+  margin-top: 20rpx;
+  text-shadow: 0px 0px 1px #333333;
+}
+/* 登录按钮 */
+.login-btn {
+  width: 60%;
+  position: absolute;
+  bottom: 20%;
+  margin-left: 20%;
+  background-color: #3474ff;
+  color: #fff;
+  box-sizing: border-box;
+  /* 伪类，按钮被点击后的效果 */
+}
+.login-btn:active {
+  background-color: #0052ff;
+}
+/* 注册部分 */
+.register-container {
+  position: absolute;
+  bottom: 50rpx;
+  width: 100%;
+  text-align: center;
+  font-size: 30rpx;
+  color: #333;
+}
+.register-container .register {
+  color: #3474ff;
+}
+
