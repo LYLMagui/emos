@@ -3,17 +3,30 @@ package com.ukir.emos.wx.db.dao;
 import com.ukir.emos.wx.db.pojo.TbUser;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.HashMap;
+import java.util.Set;
+
 @Mapper
 public interface TbUserDao {
-    int deleteByPrimaryKey(Integer id);
+    //查询是否存在超级管理员账户
+    public boolean haveRootuser();
 
-    int insert(TbUser record);
+    /**
+     * 保存用户记录
+     */
+    public int insert(HashMap param);
 
-    int insertSelective(TbUser record);
+    /**
+     * 查询用户ID
+     */
+    public Integer searchIdByOpenId(String openId);
 
-    TbUser selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(TbUser record);
 
-    int updateByPrimaryKey(TbUser record);
+    /**
+     * 根据用户id查询用户的权限
+     * 返回结果为Set集合,内容不会重复
+     */
+    public Set<String> searchUserPermissions(int userId);
+
 }

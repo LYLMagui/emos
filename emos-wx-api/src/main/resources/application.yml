@@ -106,3 +106,8 @@ emos:
     expire: 5
     # 令牌缓存时间（天）
     cache-expire: 10
+
+#微信小程序Appid和密钥
+wx:
+  app-id: wx30f5687a058db2e0
+  app-secret: 688e0335bacf650979bbfef31a826cac
