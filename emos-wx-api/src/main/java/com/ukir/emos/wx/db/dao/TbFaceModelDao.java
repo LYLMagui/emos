@@ -5,15 +5,24 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface TbFaceModelDao {
-    int deleteByPrimaryKey(Integer id);
+    /**
+     * 查询人脸模型
+     * @param userId
+     * @return
+     */
+    public String searchFaceModel(int userId);
 
-    int insert(TbFaceModel record);
+    /**
+     * 添加人脸模型
+     * @param faceModel
+     */
+    public void insert(TbFaceModel faceModel);
 
-    int insertSelective(TbFaceModel record);
+    /**
+     * 删除人脸模型
+     * @param userId
+     * @return
+     */
+    public int deleteFaceModel(int userId);
 
-    TbFaceModel selectByPrimaryKey(Integer id);
-
-    int updateByPrimaryKeySelective(TbFaceModel record);
-
-    int updateByPrimaryKey(TbFaceModel record);
 }

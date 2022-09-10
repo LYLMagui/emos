@@ -1,8 +1,9 @@
 package com.ukir.emos.wx.db.pojo;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
 
 /**
  * tb_checkin
@@ -58,7 +59,7 @@ public class TbCheckin implements Serializable {
     /**
      * 签到日期
      */
-    private Date date;
+    private String date;
 
     /**
      * 签到时间

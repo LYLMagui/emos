@@ -1,15 +1,16 @@
 package com.ukir.emos.wx.config.shiro;
 
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import com.ukir.emos.wx.db.pojo.TbUser;
+import com.ukir.emos.wx.service.UserService;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Set;
 
 /**
  *
@@ -23,6 +24,8 @@ public class OAuth2Realm extends AuthorizingRealm {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private UserService userService;
 
     @Override
     public boolean supports(AuthenticationToken token) {
@@ -36,24 +39,47 @@ public class OAuth2Realm extends AuthorizingRealm {
      * @return
      */
     @Override
-    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection collection) {
+
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-        //TODO 查询用户的权限列表
-        //TODO 把权限列表添加到info对象中
+
+        //获取保存在认证方法中添加的用户信息
+        TbUser user = (TbUser) collection.getPrimaryPrincipal();
+
+        //获取用户id
+        Integer userId = user.getId();
+
+
+        //获取用户权限列表
+        Set<String> permiSet = userService.searchUserPermissions(userId);
+
+        //把权限列表添加到info对象中
+        info.setStringPermissions(permiSet);
         return info;
     }
 
     /**
-     * 认证（登录时调用）
+     * 认证（验证登录时调用）
      * @param token
      * @return
      * @throws AuthenticationException
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-        //TODO 从令牌中获取userId，然后检测该账户是否被冻结
-        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo();
-        //TODO 往info对象中添加用户信息、Token字符串
+        //从AuthenticationToken的对象中获取token字符串
+        String accessToken = (String) token.getCredentials();
+        //从token字符串中获取用户id
+        int userId = jwtUtil.getUserId(accessToken);
+        //获取用户基本信息
+        TbUser user = userService.searchById(userId);
+
+        //用户离职时抛出错误
+        if(user == null){
+            throw new LockedAccountException("账号已被锁定，请联系管理员");
+        }
+
+        // 往info对象中添加用户信息、Token字符串、类名
+        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user,accessToken,getName());
         return info;
     }
 }

@@ -2,11 +2,9 @@ package com.ukir.emos.wx.config.shiro;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpStatus;
-import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.util.StringUtils;
 import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -144,7 +142,7 @@ public class OAuth2Filter extends AuthenticatingFilter {
                 resp.getWriter().println("令牌已过期");
                 return false;
             }
-        } catch (JWTDecodeException e) { //如果内容有问题，则捕JWTDecodeException获异常
+        } catch (Exception e) { //如果内容有问题，则捕JWTDecodeException获异常
             resp.setStatus(HttpStatus.HTTP_UNAUTHORIZED);
             resp.getWriter().println("无效的令牌");
             return false;

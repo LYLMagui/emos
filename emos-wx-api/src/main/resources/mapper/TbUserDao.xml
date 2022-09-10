@@ -3,7 +3,6 @@
 <mapper namespace="com.ukir.emos.wx.db.dao.TbUserDao">
     <!--查询是否存在超级管理员账户-->
     <select id="haveRootuser" resultType="boolean">
-        /*如果count(*)大于0,则返回true，否则返回false*/
         select if(count(*), true, false)
         from tb_user
         where root = 1;
@@ -59,13 +58,31 @@
     <select id="searchUserPermissions" parameterType="int" resultType="String">
         select p.permission_name
         from tb_user u
-                /*连接用户表查找用户所拥有的的角色*/
+                 /*连接用户表查找用户所拥有的的角色*/
                  join tb_role r on json_contains(u.role, cast(r.id as char))
-                /*连接权限列表，查找角色所拥有应的权限*/
+            /*连接权限列表，查找角色所拥有应的权限*/
                  join tb_permission p on json_contains(r.permissions, cast(p.id as char))
         where u.id = #{userId}
           and u.status = 1;
     </select>
 
+    <!--查询用户信息-->
+    <select id="searchById" parameterType="int" resultType="com.ukir.emos.wx.db.pojo.TbUser">
+        select id,
+               open_id,
+               nickname,
+               photo,
+               name,
+               sex,
+               tel,
+               role,
+               root,
+               dept_id,
+               status,
+               create_time
+        from tb_user
+        where id = #{userId}
+          and status = 1;
+    </select>
 
 </mapper>

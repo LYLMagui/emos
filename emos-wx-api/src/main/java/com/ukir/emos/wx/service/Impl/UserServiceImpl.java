@@ -1,10 +1,10 @@
 package com.ukir.emos.wx.service.Impl;
 
 import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSON;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.ukir.emos.wx.db.dao.TbUserDao;
+import com.ukir.emos.wx.db.pojo.TbUser;
 import com.ukir.emos.wx.exception.EmosException;
 import com.ukir.emos.wx.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import java.util.Set;
 @Service
 @Slf4j
 @Scope("prototype") //使用ThreadLocalToken需要的注解，prototype 为多例
+@Transactional
 public class UserServiceImpl implements UserService {
 
     //注入yml文件中的app-id
@@ -43,7 +45,7 @@ public class UserServiceImpl implements UserService {
     //定义为私有方法，防止外部访问
     private String getOpenId(String code){
         //获取OpenId的请求地址
-        String url = "ttps://api.weixin.qq.com/sns/jscode2session";
+        String url = "https://api.weixin.qq.com/sns/jscode2session";
         HashMap map = new HashMap();
         map.put("appid",appId);
         map.put("secret",appSecret);
@@ -73,7 +75,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public int registerUser(String registerCode, String code, String nickname, String photo) {
         //判断是否注册超级管理员
-        if(registerCode.equals("000000")){
+        if("000000".equals(registerCode)){
             //查询是否存在超级管理员
             boolean bool = userDao.haveRootuser();
             //如果不存在超级管理员则可以注册超级管理员
@@ -93,7 +95,7 @@ public class UserServiceImpl implements UserService {
                 int id = userDao.searchIdByOpenId(openId);//查找主键值
                 return id;
             }else {
-                throw new EmosException("无法绑定超级管理员账号");
+                throw new EmosException("超级管理员账号已存在");
             }
         }else { //普通员工注册
 
@@ -112,5 +114,38 @@ public class UserServiceImpl implements UserService {
         //获取用户权限
         Set<String> permissions = userDao.searchUserPermissions(userId);
         return permissions;
+    }
+
+    /**
+     * 用户登录
+     *
+     * @param code
+     */
+    @Override
+    public Integer login(String code) {
+        //获得openId
+        String openId = getOpenId(code);
+        //查找用户id
+        Integer id = userDao.searchIdByOpenId(openId);
+        //判断用户是否存在
+        if(id == null){
+            throw new EmosException("用户不存在");
+        }
+        //TODO 从消息队列中接收消息，转移到消息列表
+
+
+        return id;
+    }
+
+    /**
+     * 查询用户信息
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public TbUser searchById(int id) {
+        TbUser user = userDao.searchById(id);
+        return user;
     }
 }

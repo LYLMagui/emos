@@ -1,5 +1,7 @@
 package com.ukir.emos.wx.service;
 
+import com.ukir.emos.wx.db.pojo.TbUser;
+
 import java.util.Set;
 
 /**
@@ -16,6 +18,18 @@ public interface UserService {
      * 根据用户id查询用户的权限
      */
     public Set<String> searchUserPermissions(int userId);
+
+    /**
+     * 用户登录
+     */
+    public Integer login(String code);
+
+    /**
+     * 查询用户信息
+     * @param id
+     * @return
+     */
+    public TbUser searchById(int id);
 
 
 }

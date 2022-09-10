@@ -2,11 +2,13 @@ package com.ukir.emos.wx.config;
 
 import com.ukir.emos.wx.exception.EmosException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.UnauthenticatedException;
-import org.springframework.context.annotation.Scope;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
  * 精简异常消息
@@ -32,7 +34,7 @@ public class ExceptionAdvice {
         } else if (e instanceof EmosException) {
             EmosException exception = (EmosException) e;
             return exception.getMsg();
-        } else if (e instanceof UnauthenticatedException) {
+        } else if (e instanceof UnauthorizedException) { // 未经授权的异常
             return "你不具备相关权限";
         } else {
             return "后端执行异常";

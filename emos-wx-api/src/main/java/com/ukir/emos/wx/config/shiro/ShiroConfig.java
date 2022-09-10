@@ -66,8 +66,8 @@ public class ShiroConfig {
         filterMap.put("/captcha.jpg/**","anon");
         filterMap.put("/user/register","anon");
         filterMap.put("/user/login","anon");
-        filterMap.put("/test/**","anon");
-        filterMap.put("//**","oauth2"); //oauth2是上面放到map里的拦截器的名字
+//        filterMap.put("/test/**","anon");
+        filterMap.put("/**","oauth2"); //oauth2是上面放到map里的拦截器的名字
 
         shiroFilter.setFilterChainDefinitionMap(filterMap);
 

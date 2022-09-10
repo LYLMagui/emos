@@ -75,6 +75,12 @@ spring:
       username: admin
       password: abc123456
 
+  mail:
+    default-encoding: UTF-8
+    host: smtp.qq.com
+    username: 2416053677@qq.com
+    password: 1357924680qwer
+
 # 配置Mybatis
 mybatis:
   # meapper映射文件的路径
@@ -106,8 +112,22 @@ emos:
     expire: 5
     # 令牌缓存时间（天）
     cache-expire: 10
+  #人脸识别相关请求地址
+  face:
+    createFaceModelUrl: http://192.168.24.13:3000/create_face_model
+    checkinUrl: http://192.168.24.13:3000/checkin
+
+  #发送通知邮件的邮箱
+  email:
+    system: 2416053677@qq.com
+    hr: 2416053677@qq.com
+
+  #设置图片存放路径
+  image-folder: G:/emos/image
+  code:
 
 #微信小程序Appid和密钥
 wx:
   app-id: wx30f5687a058db2e0
   app-secret: 688e0335bacf650979bbfef31a826cac
+

@@ -1,19 +1,15 @@
 package com.ukir.emos.wx.db.dao;
 
-import com.ukir.emos.wx.db.pojo.TbCity;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface TbCityDao {
-    int deleteByPrimaryKey(Integer id);
 
-    int insert(TbCity record);
+    /**
+     * 查询城市代码
+     * @param city
+     * @return
+     */
+    public String searchCode(String city);
 
-    int insertSelective(TbCity record);
-
-    TbCity selectByPrimaryKey(Integer id);
-
-    int updateByPrimaryKeySelective(TbCity record);
-
-    int updateByPrimaryKey(TbCity record);
 }
