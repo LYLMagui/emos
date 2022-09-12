@@ -79,8 +79,8 @@ spring:
     default-encoding: UTF-8
     host: smtp.qq.com
     port: 465 #使用465端口 协议选择 smtps ，使用587端口 协议选择smtp
-    username: 2416053677@qq.com
-    password: wbjttiwelzrxebie # 使用授权码
+    username: xxx@qq.com
+    password:  # 使用授权码
     protocol: smtps
     #设置开启ssl
     properties:
@@ -126,13 +126,13 @@ emos:
     cache-expire: 10
   #人脸识别相关请求地址
   face:
-    createFaceModelUrl: http://192.168.24.13:3000/create_face_model
-    checkinUrl: http://192.168.24.13:3000/checkin
+    createFaceModelUrl: xxx/create_face_model
+    checkinUrl: xxx/checkin
 
   #腾讯云密钥
   tencent-could:
-    secret-id: AKID86qLaZQ1PZT9ZjgQwCCyTlnZ7PRDm8E6
-    secret-key: g7JG1XptjLirlQr42lHbhbHjyzmLgnhL
+    secret-id:
+    secret-key:
     #地域服务器参数
     region: ap-guangzhou
     request-url: iai.tencentcloudapi.com
@@ -148,6 +148,6 @@ emos:
 
 #微信小程序Appid和密钥
 wx:
-  app-id: wx30f5687a058db2e0
-  app-secret: 688e0335bacf650979bbfef31a826cac
+  app-id:
+  app-secret:
 
