@@ -18,12 +18,13 @@ public class EmailTask {
     @Autowired
     private JavaMailSender javaMailSender;
 
-    @Value("${emos.email.system}")
-    private String mailBox;
+    @Value("${spring.mail.username}")
+    private String from;
 
     @Async
     public void  sendAsync(SimpleMailMessage message){
-        message.setFrom(mailBox);
+        //发件人邮箱地址
+        message.setFrom(from);
         javaMailSender.send(message);
     }
 

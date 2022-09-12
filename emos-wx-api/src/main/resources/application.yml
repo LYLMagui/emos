@@ -74,12 +74,24 @@ spring:
       authentication-database: admin
       username: admin
       password: abc123456
-
+  #发送邮件配置
   mail:
     default-encoding: UTF-8
     host: smtp.qq.com
+    port: 465 #使用465端口 协议选择 smtps ，使用587端口 协议选择smtp
     username: 2416053677@qq.com
-    password: 1357924680qwer
+    password: wbjttiwelzrxebie # 使用授权码
+    protocol: smtps
+    #设置开启ssl
+    properties:
+      mail:
+        smtp:
+          auth: true # 使用
+          starttls: # 使用 SSL 安全协议，须如下配置
+            enable: true
+            required: true
+        debug: false # 开启debug
+
 
 # 配置Mybatis
 mybatis:
@@ -117,14 +129,22 @@ emos:
     createFaceModelUrl: http://192.168.24.13:3000/create_face_model
     checkinUrl: http://192.168.24.13:3000/checkin
 
+  #腾讯云密钥
+  tencent-could:
+    secret-id: AKID86qLaZQ1PZT9ZjgQwCCyTlnZ7PRDm8E6
+    secret-key: g7JG1XptjLirlQr42lHbhbHjyzmLgnhL
+    #地域服务器参数
+    region: ap-guangzhou
+    request-url: iai.tencentcloudapi.com
+
+
   #发送通知邮件的邮箱
   email:
     system: 2416053677@qq.com
-    hr: 2416053677@qq.com
+    hr: 1549350097@qq.com
 
   #设置图片存放路径
   image-folder: G:/emos/image
-  code:
 
 #微信小程序Appid和密钥
 wx:

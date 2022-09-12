@@ -10,6 +10,8 @@
           and create_time between #{start}
           and #{end}
             limit 1;
+
+
     </select>
 
     <!--添加用户签到数据-->
@@ -20,7 +22,7 @@
             address=#{address},
         </if>
         <if test="country!=null">
-            country=#{conuntry},
+            country=#{country},
         </if>
         <if test="province!=null">
             province=#{province},

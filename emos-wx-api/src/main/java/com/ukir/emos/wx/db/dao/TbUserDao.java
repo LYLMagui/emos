@@ -36,4 +36,10 @@ public interface TbUserDao {
      */
     public TbUser searchById(int id);
 
+    /**
+     * 查询员工姓名和所属部门
+     * @param userId
+     */
+    public HashMap searchNameAndDept(int userId);
+
 }

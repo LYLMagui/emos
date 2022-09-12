@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -52,7 +53,8 @@ public class CheckinController {
 
     @PostMapping("/checkin")
     @ApiOperation("签到")
-    public Result checkin(@Valid CheckinForm form, @RequestParam("photo") MultipartFile file, @RequestParam("token") String token) {
+    public Result checkin(@Valid CheckinForm form, @RequestParam("photo") MultipartFile file, HttpServletRequest request) {
+        String token = request.getHeader("token");
 
         if (file == null) { //判断上传的照片是否为空
             return Result.error("没有上传文件");
@@ -93,7 +95,8 @@ public class CheckinController {
 
     @PostMapping("/createFaceModel")
     @ApiOperation("创建人脸模型")
-    public Result createFaceModel(@RequestParam("photo") MultipartFile file,@RequestParam("token") String token){
+    public Result createFaceModel(@RequestParam("photo") MultipartFile file,HttpServletRequest request) {
+        String token = request.getHeader("token");
         if (file == null) { //判断上传的照片是否为空
             return Result.error("没有上传文件");
         }
@@ -109,7 +112,7 @@ public class CheckinController {
                 //获取图片路径并生成图片文件
                 file.transferTo(Paths.get(path));
                 //调用创建人脸模型方法
-                checkinService.createFaceModel(userId,path);
+                checkinService.createFaceModel(userId, path);
                 return Result.ok("人脸建模成功");
             } catch (IOException e) {
                 log.error(e.getMessage(), e);
