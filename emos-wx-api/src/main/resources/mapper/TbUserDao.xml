@@ -91,7 +91,7 @@
         from tb_user u
                  left join tb_dept d on u.dept_id = d.id
         where u.id = #{userId}
-          and u.tatus = 1
+          and u.status = 1
     </select>
 
     <!--查询用户入职日期-->

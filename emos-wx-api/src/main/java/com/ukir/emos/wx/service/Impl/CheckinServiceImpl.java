@@ -109,6 +109,7 @@ public class CheckinServiceImpl implements CheckinService {
         boolean bool1_1 = holidaysDao.searchTodayIsHolidays() != null ? true : false;
         boolean bool1_2 = workdayDao.searchTodayIsWorkday() != null ? true : false;
 
+
         String type = "工作日";
         //判断是否是周末
         if (DateUtil.date().isWeekend()) {
@@ -136,8 +137,8 @@ public class CheckinServiceImpl implements CheckinService {
 
             if (now.isBefore(attendanceStart)) {
                 return "未到上班考勤时间";
-//            } else if (now.isAfter(attendanceEnd)) {
-//                return "考勤时间已结束";
+            } else if (now.isAfter(attendanceEnd)) {
+                return "考勤时间已结束";
             } else {
                 //判断用户当前是否已经考勤过
                 System.out.println("判断是否可以考勤中");
@@ -178,7 +179,7 @@ public class CheckinServiceImpl implements CheckinService {
             status = 2;
         } else {
             // TODO 记得去掉注释
-            throw new EmosException("超出考勤时间段，无法考勤");
+            throw new EmosException("超出考勤时间段，无法考勤") ;
         }
         //获取用户id
         String userId = String.valueOf(param.get("userId"));
