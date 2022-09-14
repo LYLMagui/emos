@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ukir.emos.wx.db.dao.TbHolidaysDao">
-  <!--查询今天是否是节假日-->
-  <select id="searchTodayIsHolidays" resultType="Integer">
-    select id from tb_holiday where date = current_date limit 1;
-  </select>
+    <!--查询今天是否是节假日-->
+    <select id="searchTodayIsHolidays" resultType="Integer">
+        select id
+        from tb_holidays
+        where date = current_date limit 1;
+    </select>
+
+    <!--查询日期是否特殊节假日-->
+    <select id="searchHolidaysInRange" parameterType="HashMap" resultType="String">
+        select date
+        from tb_holidays
+        where date between #{startDate}
+          and #{endDate}
+    </select>
+
+
+
 </mapper>

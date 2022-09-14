@@ -1,5 +1,6 @@
 package com.ukir.emos.wx.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -24,4 +25,28 @@ public interface CheckinService  {
      * @param path
      */
     public void createFaceModel(int userId,String path);
+
+
+    /**
+     * 查询用户今日签到情况
+     * @param userId
+     * @return
+     */
+    public HashMap searchTodayCheckin(int userId);
+
+    /**
+     * 查询用户签到总天数
+     * @param userId
+     * @return
+     */
+    public long searchCheckinDays(int userId);
+
+
+    /**
+     * 查询用户周签到情况
+     * @param param
+     * @return
+     */
+    public ArrayList<HashMap> searchWeekCheckin(HashMap param);
+
 }

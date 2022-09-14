@@ -42,4 +42,12 @@ public interface TbUserDao {
      */
     public HashMap searchNameAndDept(int userId);
 
+
+    /**
+     * 查询用户入职日期
+     * @param userId
+     * @return
+     */
+    public String searchUserHiredate(int userId);
+
 }

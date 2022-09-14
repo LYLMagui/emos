@@ -1,5 +1,7 @@
 package com.ukir.emos.wx.service.Impl;
 
+import cn.hutool.core.date.DateField;
+import cn.hutool.core.date.DateRange;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
@@ -34,6 +36,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -175,7 +178,7 @@ public class CheckinServiceImpl implements CheckinService {
             status = 2;
         } else {
             // TODO 记得去掉注释
-//            throw new EmosException("超出考勤时间段，无法考勤");
+            throw new EmosException("超出考勤时间段，无法考勤");
         }
         //获取用户id
         String userId = String.valueOf(param.get("userId"));
@@ -256,7 +259,7 @@ public class CheckinServiceImpl implements CheckinService {
                                     risk = 3;
                                     //TODO 发送警告邮件
 
-                                    HashMap<String,String> map = userDao.searchNameAndDept(Integer.parseInt(userId));
+                                    HashMap<String, String> map = userDao.searchNameAndDept(Integer.parseInt(userId));
                                     //获取员工姓名
                                     String name = map.get("name");
                                     //获取员工所属部门
@@ -270,8 +273,8 @@ public class CheckinServiceImpl implements CheckinService {
                                     //邮件标题
                                     message.setSubject("员工" + name + "身处疫情高风险地区");
                                     //正文内容
-                                    message.setText(deptName + "员工，" + name + "，" + DateUtil.format(new Date(),"yyyy年MM月dd日") + "" +
-                                            "处于" + param.get("address").toString() + "，属于新冠疫情高风险地区，请及时与该员工联系，核实情况！" );
+                                    message.setText(deptName + "员工，" + name + "，" + DateUtil.format(new Date(), "yyyy年MM月dd日") + "" +
+                                            "处于" + param.get("address").toString() + "，属于新冠疫情高风险地区，请及时与该员工联系，核实情况！");
                                     emailTask.sendAsync(message);
 
 
@@ -304,7 +307,7 @@ public class CheckinServiceImpl implements CheckinService {
 
                 //
             } catch (TencentCloudSDKException e) {
-                throw new EmosException("签到失败，"+e.getMessage());
+                throw new EmosException("签到失败，" + e.getMessage());
             }
 
 
@@ -436,12 +439,12 @@ public class CheckinServiceImpl implements CheckinService {
                 entity.setUserId(userId);
                 entity.setFaceModel(json.get("FaceId").toString());
                 faceModelDao.insert(entity);
-            }else if(json.get("Error") != null){
+            } else if (json.get("Error") != null) {
                 throw new EmosException(json.get("Message").toString());
             }
         } catch (TencentCloudSDKException e) {
             log.error("录入人脸数据出现异常", e);
-            throw new EmosException("录入失败"+"\n" + e.getMessage());
+            throw new EmosException("录入失败" + "\n" + e.getMessage());
         }
 
 
@@ -464,6 +467,97 @@ public class CheckinServiceImpl implements CheckinService {
             faceModelDao.insert(entity);
         }
     */
+    }
+
+    /**
+     * 查询用户今日签到情况
+     *
+     * @param userId
+     * @return 今日签到情况
+     */
+    @Override
+    public HashMap searchTodayCheckin(int userId) {
+        HashMap map = checkinDao.searchTodayCheckin(userId);
+        return map;
+    }
+
+    /**
+     * 查询用户签到总天数
+     *
+     * @param userId
+     * @return 签到总天数
+     */
+    @Override
+    public long searchCheckinDays(int userId) {
+        long days = checkinDao.searchCheckinDays(userId);
+        return days;
+    }
+
+    /**
+     * 查询用户周签到情况
+     *
+     * @param param
+     * @return 记录一周考勤的List
+     */
+    @Override
+    public ArrayList<HashMap> searchWeekCheckin(HashMap param) {
+        ArrayList<HashMap> checkinList = checkinDao.searchWeekCheckin(param); //获取本周的考勤情况
+        ArrayList<String> holidaysList = holidaysDao.searchHolidaysInRange(param);//查询本周特殊的节假日
+        ArrayList<String> workdayList = workdayDao.searchWorkdayInRange(param);//查询本周特殊的工作日
+
+        DateTime startDate = DateUtil.parse(param.get("startDate").toString());//获取本周的开始日期
+        DateTime endDate = DateUtil.parse(param.get("endDate").toString());//获取本周的结束日期
+        DateRange range = DateUtil.range(startDate, endDate, DateField.DAY_OF_MONTH);//每隔一天生成一个日期对象
+        ArrayList<HashMap> list = new ArrayList<>();
+        range.forEach(one -> {
+            String date = one.toString("yyyy-MM-dd");//获取日期
+            String type = "工作日";
+            if (one.isWeekend()) { //判断当前日期是否节假日
+                type = "节假日";
+            }
+            if (holidaysList != null && holidaysList.contains(date)) {
+                //在特殊节假日集合中查询今天是否是特殊节假日
+                type = "节假日";
+            } else if (workdayList != null && workdayList.contains(date)) {
+                //在工作日集合中查询今天是否是特殊工作日
+                type = "工作日";
+            }
+
+            String status = "";
+            //比较日期，判断这一天是否已经过去 DateUtil.date() 返回当前时间
+            if (type.equals("工作日") && DateUtil.compare(one, DateUtil.date()) <= 0) {
+                status = "缺勤";
+                boolean flag = false;
+                //查询当天是否有签到
+                for (HashMap<String, String> map : checkinList) {
+                    //判断这一天在签到表里是否有记录
+                    if (map.containsValue(date)) {
+                        status = map.get("status");
+                        flag = true;
+                        break;
+                    }
+
+                    //获取当天考勤结束时间
+                    DateTime endTime = DateUtil.parse(DateUtil.today() + "" + constants.attendanceEndTime);
+                    String today = DateUtil.today(); //获取当前日期
+
+                    if (date.equals(today) && DateUtil.date().isBefore(endTime) && flag == false) {
+                        //如果在考勤结束前还未考勤，则显示为空字符串
+                        status = "";
+                    }
+                }
+            }
+
+            //封装当天的考勤信息
+            HashMap map = new HashMap();
+            map.put("date", date);
+            map.put("status", status);
+            map.put("type", type);
+            map.put("day", one.dayOfWeekEnum().toChinese("周")); //获取今天是周几
+            list.add(map);
+
+        });
+        return list;
     }
 
 

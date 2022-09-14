@@ -148,4 +148,18 @@ public class UserServiceImpl implements UserService {
         TbUser user = userDao.searchById(id);
         return user;
     }
+
+    /**
+     * 查询用户入职日期
+     *
+     * @param userId
+     * @return
+     */
+    @Override
+    public String searchUserHiredate(int userId) {
+        String hiredate = userDao.searchUserHiredate(userId);
+        return hiredate;
+    }
+
+
 }

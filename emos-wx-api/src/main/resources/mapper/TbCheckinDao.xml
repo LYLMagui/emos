@@ -41,5 +41,48 @@
         create_time=#{createTime}
     </insert>
 
+    <!--查询用户今日签到情况-->
+    <select id="searchTodayCheckin" parameterType="int" resultType="HashMap">
+        SELECT u.name,                                              -- 用户名称
+               u.photo,                                             -- 用户头像
+               d.dept_name                          AS deptName,    -- 用户部门
+               ck.address,
+               CASE
+                   WHEN ck.status = 1 THEN '正常' -- 当status = 1 时，返回'正常'结果
+                   WHEN ck.status = 2 THEN '迟到'
+                   END                              AS status,      -- 给结果取别名
+               CASE
+                   WHEN ck.risk = 1 THEN '低风险'
+                   WHEN ck.risk = 2 THEN '中风险'
+                   WHEN ck.risk = 3 THEN '高风险'
+                   END                              AS risk,
+               DATE_FORMAT(ck.create_time, "%H:%i") AS checkinTime, -- 格式化签到时间
+               ck.date
+        FROM tb_user u
+                 LEFT JOIN tb_dept d ON u.dept_id = d.id -- 左外连接部门表
+                 LEFT JOIN tb_checkin ck ON u.id = ck.user_id AND ck.date = CURRENT_DATE
+        WHERE u.id = #{userId}
+          AND u.status = 1
+
+    </select>
+
+    <!--查询用户签到总天数-->
+    <select id="searchCheckinDays" parameterType="int" resultType="long">
+        SELECT COUNT(*) AS count
+        FROM tb_checkin
+        WHERE user_id=#{userId}
+    </select>
+
+    <!--查询用户周签到情况-->
+    <select id="searchWeekCheckin" parameterType="HashMap" resultType="HashMap">
+        -- 本周签到统计
+        SELECT CAST(date as CHAR) AS date, -- 将日期数据类型转换成字符串类型，方便java程序接收
+	IF(status=1,"正常","迟到") AS status -- 如果status = 1 ，取名为'正常'，如果不为1，取名为'迟到'
+        FROM tb_checkin
+        WHERE user_id=22
+          AND date BETWEEN #{startDate}
+          AND #{endDate} -- 时间为周一到周日
+
+    </select>
 
 </mapper>

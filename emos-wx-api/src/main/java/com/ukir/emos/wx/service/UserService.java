@@ -32,5 +32,11 @@ public interface UserService {
     public TbUser searchById(int id);
 
 
+    /**
+     * 查询用户入职日期
+     * @param userId
+     * @return
+     */
+    public String searchUserHiredate(int userId);
 
 }

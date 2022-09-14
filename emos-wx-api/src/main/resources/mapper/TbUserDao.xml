@@ -93,4 +93,13 @@
         where u.id = #{userId}
           and u.tatus = 1
     </select>
+
+    <!--查询用户入职日期-->
+    <select id="searchUserHiredate" parameterType="int" resultType="String">
+        select hiredate
+        from tb_user
+        where id = #{userId}
+          and status = 1
+    </select>
+
 </mapper>

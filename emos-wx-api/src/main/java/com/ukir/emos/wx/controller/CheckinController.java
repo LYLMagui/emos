@@ -1,12 +1,15 @@
 package com.ukir.emos.wx.controller;
 
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import com.ukir.emos.wx.common.util.Result;
+import com.ukir.emos.wx.config.SystemConstants;
 import com.ukir.emos.wx.config.shiro.JwtUtil;
 import com.ukir.emos.wx.controller.form.CheckinForm;
 import com.ukir.emos.wx.exception.EmosException;
 import com.ukir.emos.wx.service.CheckinService;
+import com.ukir.emos.wx.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -40,6 +44,13 @@ public class CheckinController {
 
     @Autowired
     private CheckinService checkinService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private SystemConstants constants;
+
 
 
     @GetMapping("/validCanCheckIn")
@@ -123,5 +134,36 @@ public class CheckinController {
             }
         }
 
+    }
+
+    @GetMapping("/searchTodayCheckin")
+    @ApiOperation("查询用户当日签到数据")
+    public Result searchTodayCheckin(@RequestHeader("token") String token){
+        int userId = jwtUtil.getUserId(token);
+
+        HashMap map = checkinService.searchTodayCheckin(userId); //查询当天考勤结果
+        map.put("attendanceStartTime",constants.attendanceStartTime); //存入考勤开始时间
+        map.put("closingTime",constants.closingTime); //存入考勤结束时间
+
+        long days = checkinService.searchCheckinDays(userId); //获取考勤总天数
+        map.put("checkinDays",days);
+
+        DateTime hiredate = DateUtil.parse(userService.searchUserHiredate(userId)); // 获取入职日期对象
+
+        DateTime startDate = DateUtil.beginOfWeek(DateUtil.date());//获取当前周的周一日期
+        if (startDate.isBefore(hiredate)){ //本周开始日期是否在入职日期之前
+            startDate = hiredate;
+        }
+
+        DateTime endDate = DateUtil.endOfWeek(DateUtil.date()); // 获取本周结束日期
+
+        HashMap param = new HashMap();
+        param.put("startDate",startDate.toString());
+        param.put("endDate",endDate.toString());
+        param.put("userId",userId);
+
+        ArrayList<HashMap> list = checkinService.searchWeekCheckin(param);//查询本周考勤数据
+        map.put("weekCheckin",list);
+        return Result.ok().put("result",map);
     }
 }
