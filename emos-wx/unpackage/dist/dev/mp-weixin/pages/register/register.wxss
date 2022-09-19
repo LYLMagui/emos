@@ -15,6 +15,7 @@
   /* 注册按钮样式 */
 }
 .register-container .register-code {
+  text-align: center;
   border: solid 1rpx #e0e0e0;
   font-size: 2 4rpx;
   color: #333;

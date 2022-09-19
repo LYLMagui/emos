@@ -158,9 +158,45 @@ var _default =
     return {};
   },
   methods: {
+    //跳转注册页面
     toRegister: function toRegister() {
       uni.navigateTo({
-        url: "../register/register" });
+        url: '../register/register' });
+
+    },
+
+    //登录功能
+    login: function login() {
+      var that = this;
+
+      uni.login({
+        provider: "weixin",
+        //成功的回调
+        success: function success(resp) {
+          var code = resp.code;
+          console.log("临时授权字符串 " + code);
+          that.ajax(that.url.login, "POST", { "code": code }, function (resp) {
+            //获取权限列表
+            var permission = resp.data.permission;
+            //存储到storage变量里
+            uni.setStorageSync("permission", permission);
+            //跳转到index页面
+            uni.switchTab({
+              url: '../index/index' });
+
+          });
+          console.log("success");
+
+
+        },
+        //失败的回调
+        fail: function fail(e) {
+          console.log(e);
+          uni.showToast({
+            icon: "none",
+            title: "执行异常" });
+
+        } });
 
     } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))

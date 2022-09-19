@@ -7,17 +7,111 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(createApp) {__webpack_require__(/*! uni-pages */ 5);var _App = _interopRequireDefault(__webpack_require__(/*! ./App */ 6));
+/* WEBPACK VAR INJECTION */(function(createApp, uni) {__webpack_require__(/*! uni-pages */ 5);var _App = _interopRequireDefault(__webpack_require__(/*! ./App */ 6));
 
 
-var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ 3));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function ownKeys(object, enumerableOnly) {var keys = Object.keys(object);if (Object.getOwnPropertySymbols) {var symbols = Object.getOwnPropertySymbols(object);if (enumerableOnly) symbols = symbols.filter(function (sym) {return Object.getOwnPropertyDescriptor(object, sym).enumerable;});keys.push.apply(keys, symbols);}return keys;}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};if (i % 2) {ownKeys(Object(source), true).forEach(function (key) {_defineProperty(target, key, source[key]);});} else if (Object.getOwnPropertyDescriptors) {Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));} else {ownKeys(Object(source)).forEach(function (key) {Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));});}}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}wx.__webpack_require_UNI_MP_PLUGIN__ = __webpack_require__;
+var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ 3));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _createForOfIteratorHelper(o, allowArrayLike) {var it;if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {if (it) o = it;var i = 0;var F = function F() {};return { s: F, n: function n() {if (i >= o.length) return { done: true };return { done: false, value: o[i++] };}, e: function e(_e) {throw _e;}, f: F };}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}var normalCompletion = true,didErr = false,err;return { s: function s() {it = o[Symbol.iterator]();}, n: function n() {var step = it.next();normalCompletion = step.done;return step;}, e: function e(_e2) {didErr = true;err = _e2;}, f: function f() {try {if (!normalCompletion && it.return != null) it.return();} finally {if (didErr) throw err;}} };}function _unsupportedIterableToArray(o, minLen) {if (!o) return;if (typeof o === "string") return _arrayLikeToArray(o, minLen);var n = Object.prototype.toString.call(o).slice(8, -1);if (n === "Object" && o.constructor) n = o.constructor.name;if (n === "Map" || n === "Set") return Array.from(o);if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);}function _arrayLikeToArray(arr, len) {if (len == null || len > arr.length) len = arr.length;for (var i = 0, arr2 = new Array(len); i < len; i++) {arr2[i] = arr[i];}return arr2;}function ownKeys(object, enumerableOnly) {var keys = Object.keys(object);if (Object.getOwnPropertySymbols) {var symbols = Object.getOwnPropertySymbols(object);if (enumerableOnly) symbols = symbols.filter(function (sym) {return Object.getOwnPropertyDescriptor(object, sym).enumerable;});keys.push.apply(keys, symbols);}return keys;}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};if (i % 2) {ownKeys(Object(source), true).forEach(function (key) {_defineProperty(target, key, source[key]);});} else if (Object.getOwnPropertyDescriptors) {Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));} else {ownKeys(Object(source)).forEach(function (key) {Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));});}}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}wx.__webpack_require_UNI_MP_PLUGIN__ = __webpack_require__;
 _vue.default.config.productionTip = false;
 _App.default.mpType = 'app';
 var app = new _vue.default(_objectSpread({},
 _App.default));
 
 createApp(app).$mount();
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["createApp"]))
+
+
+
+
+//后端项目地址
+var baseUrl = "http://192.168.124.12:8080/emos-wx-api";
+
+
+/* 全局接口地址 */
+_vue.default.prototype.url = {
+  register: baseUrl + "/user/register", //注册用户接口地址
+  login: baseUrl + "/user/login", //用户登录接口地址
+  checkin: baseUrl + "/checkin/checkin", //签到
+  //创建人脸模型
+  createFaceModel: baseUrl + "/checkin/createFaceModel",
+  //查看当前时间能否签到
+  validCanCheckIn: baseUrl + "/checkin/validCanCheckIn",
+  //获取签到成功的详情
+  searchTodayCheckin: baseUrl + "/checkin/searchTodayCheckin",
+  //获取用户概要信息
+  searchUserSummary: baseUrl + "/user/searchUserSummary",
+  //获取当月考勤数据
+  searchMonthCheckin: baseUrl + "/checkin/searchMonthCheckin" };
+
+
+
+
+/* 全局权限验证函数 */
+_vue.default.prototype.checkPermission = function (perms) {
+  //从storage变量里取出用户权限列表
+  var permission = uni.getStorageSync("permission");
+  var result = false;var _iterator = _createForOfIteratorHelper(
+  perms),_step;try {for (_iterator.s(); !(_step = _iterator.n()).done;) {var one = _step.value;
+      // 从数组中取出变量和permission中的值比较
+      if (permission.indexOf(one) != -1) {
+        result = true;
+        break;
+      }
+    }} catch (err) {_iterator.e(err);} finally {_iterator.f();}
+  return result;
+};
+
+
+
+
+
+
+/*
+   	全局封装Ajax
+   	参数：
+   	url:请求地址
+   	method:请求方式
+   	data:请求数据
+   	fun:匿名函数
+   */
+_vue.default.prototype.ajax = function (url, method, data, fun) {
+  uni.request({
+    "url": url,
+    "method": method,
+    "header": {
+      token: uni.getStorageSync("token") //从Storage中获取保存的token
+    },
+    "data": data,
+    success: function success(resp) {//成功的回调
+      //如果返回的状态码为401,则表示用户未登录，跳转登录页面
+      if (resp.statusCode == 401) {
+        uni.redirectTo({
+          url: "/pages/login/login.vue" });
+
+
+      } else if (resp.statusCode == 200 && resp.data.code == 200) {//如果响应状态码和业务状态码都为200
+
+        var _data = resp.data;
+        //判断返回的数据中是否有token
+        if (_data.hasOwnProperty("token")) {
+          var token = _data.token;
+          console.log("token " + token);
+          //将token存储到Storage中
+          uni.setStorageSync("token", token);
+        }
+        //匿名函数，自己定义
+        fun(resp);
+      }
+      //异常提示
+      else {
+          uni.showToast({
+            icon: "none",
+            title: resp.data });
+
+
+        }
+    } });
+
+};
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["createApp"], __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
 /***/ }),
 /* 1 */,

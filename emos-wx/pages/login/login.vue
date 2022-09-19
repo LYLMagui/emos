@@ -20,12 +20,47 @@ export default {
 		return {};
 	},
 	methods: {
-		toRegister:function(){
+		//跳转注册页面
+		toRegister: function() {
 			uni.navigateTo({
-				url:"../register/register"
+				url: '../register/register'
+			});
+		},
+		
+		//登录功能
+		login:function(){
+			let that = this;
+			
+			uni.login({
+				provider:"weixin",
+				//成功的回调
+				success:function(resp){
+					let code = resp.code;
+					console.log("临时授权字符串 "+code);
+					that.ajax(that.url.login,"POST",{"code":code},function(resp){
+						//获取权限列表
+						let permission = resp.data.permission;
+						//存储到storage变量里
+						uni.setStorageSync("permission",permission);
+						//跳转到index页面
+						uni.switchTab({
+							url:'../index/index'
+						});
+					})
+					console.log("success");
+					
+
+				},
+				//失败的回调
+				fail:function(e){
+					console.log(e);
+					uni.showToast({
+						icon:"none",
+						title:"执行异常"
+					})
+				}
 			})
 		}
-		
 	}
 };
 </script>

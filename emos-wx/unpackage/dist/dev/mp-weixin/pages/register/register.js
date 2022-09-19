@@ -147,19 +147,39 @@ __webpack_require__.r(__webpack_exports__);
 var _default =
 {
   data: function data() {
-    return {};
-
+    return {
+      registerCode: "" };
 
 
   },
   methods: {
     register: function register() {
+      //这里的this指代的是vue对象，function中的this指代的是函数对象，为了避免混淆，这里使用that来指代vue对象
+      var that = this;
+
+      //表单验证
+      if (that.registerCode == null || that.registerCode.length == 0) {
+        uni.showToast({
+          icon: "none",
+          title: "邀请码不能为空" });
+
+        //结束方法，不执行后面的方法
+        return;
+      } else if (/^[0-9]{6}$/.test(that.registerCode) == false) {//验证邀请码是否为6未数字
+        uni.showToast({
+          title: "邀请码必须是6位数字",
+          icon: "none" });
+
+        return;
+      }
+
       uni.login({
         //登录服务提供商
         provider: "weixin",
         //成功的回调
         success: function success(resp) {
           var code = resp.code;
+          console.log(code);
           //获取用户信息
           uni.getUserInfo({
             provider: "weixin",
@@ -168,8 +188,29 @@ var _default =
               var nicknName = resp.userInfo.nickName;
               //获得用户头像url地址
               var avatarUrl = resp.userInfo.avatarUrl;
-              console.log(nicknName);
-              console.log(avatarUrl);
+              // console.log(nicknName);
+              // console.log(avatarUrl);
+              /* 发送ajax请求 */
+
+              //封装数据
+              var data = {
+                code: code,
+                nickname: nicknName,
+                photo: avatarUrl,
+                registerCode: that.registerCode };
+
+              //调用ajax请求
+              that.ajax(that.url.register, "POST", data, function (resp) {
+                //获取用户权限列表
+                var permission = resp.data.permission;
+                //将用户权限列表存储到Storage内
+                uni.setStorageSync("permission", permission);
+                console.log(permission);
+                // 跳转到index页面
+                uni.switchTab({
+                  url: '../index/index' });
+
+              });
             } });
 
         } });
