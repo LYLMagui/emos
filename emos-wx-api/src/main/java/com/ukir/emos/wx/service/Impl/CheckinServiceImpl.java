@@ -250,7 +250,7 @@ public class CheckinServiceImpl implements CheckinService {
 
                                 //获取疫情风险等级
                                 String result = elements.select("div > div:nth-child(2) > p").text();
-                                result = "高风险";
+//                                result = "高风险";
                                 //设置风险等级
                                 if ("常态化防控".equals(result)) {
                                     risk = 1;
@@ -311,91 +311,6 @@ public class CheckinServiceImpl implements CheckinService {
                 throw new EmosException("签到失败，" + e.getMessage());
             }
 
-
-
-
-
-        /*
-        //查询人脸模型数据
-        String faceModel = faceModelDao.searchFaceModel(userId);
-        if (faceModel == null) {
-            throw new EmosException("不存在人脸模型");
-        } else { //人脸模型存在
-
-
-            //获取照片路径
-            String path = (String) param.get("path");
-
-            //向人脸识别程序发起请求核验人脸模型
-            HttpRequest request = HttpUtil.createPost(checkinUrl);
-            request.form("photo", FileUtil.file(path), "targetModel"); // 上传图片路径和人脸模型数据  targetModel这个参数由python决定
-            HttpResponse response = request.execute();
-            if (response.getStatus() != 200) {
-                log.error("人脸识别服务异常");
-                throw new EmosException("人脸识别服务异常");
-            }
-            String body = response.body();
-            if ("无法识别出人脸".equals(body) || "照片中存在多张人脸".equals(body)) {
-                throw new EmosException(body);
-
-            } else if ("False".equals(body)) {
-                throw new EmosException("非本人签到，签到无效");
-            }else if ("True".equals(body)){
-                // 查询疫情风险等级
-                int risk =1; //风险等级 1：低风险 2：中风险 3：高风险
-                String city = (String) param.get("city"); //城市
-                String district = (String) param.get("district"); //区
-
-                //不为空
-                if(!StrUtil.isBlank(city) && !StrUtil.isBlank(district)){
-                    //查询城市代码
-                    String code = cityDao.searchCode(city);
-
-                    try{
-                        String url = "http://m." + code + ".bendibao.com/news/yqdengji/?qu=" + district;
-                        Document document = Jsoup.connect(url).get();
-                        //解析HTML
-                        Elements elements = document.getElementsByClass("list");
-                        if (elements.size() > 0){
-                            //获取疫情风险等级
-                            String result = elements.select("#\\33 3166 > div:nth-child(2) > p").text();
-                            //设置风险等级
-                            if("常态化防控".equals(result)){
-                                risk = 1;
-                            }else if("中风险".equals(result)){
-                                risk = 2;
-                            }else if("高风险".equals(result)){
-                                risk = 3;
-                                //TODO 发送警告邮件
-
-                            }
-                        }
-
-                    }catch (Exception e){
-                        log.error("执行异常",e);
-                        throw new EmosException("获取风险等级失败");
-                    }
-
-                }
-                // 保存签到记录
-                String address = (String) param.get("address");
-                String country = (String) param.get("country");
-                String province = (String) param.get("province");
-
-                TbCheckin entity = new TbCheckin();
-                entity.setUserId(userId);
-                entity.setAddress(address);
-                entity.setCountry(country);
-                entity.setProvince(province);
-                entity.setCity(city);
-                entity.setDistrict(district);
-                entity.setStatus((byte) status);
-                entity.setDate(DateUtil.today());
-                entity.setCreateTime(d1);
-                checkinDao.insert(entity);
-            }
-        }
-*/
         }
     }
 
@@ -448,26 +363,6 @@ public class CheckinServiceImpl implements CheckinService {
             throw new EmosException("录入失败" + "\n" + e.getMessage());
         }
 
-
-    /*
-        //向python程序发送创建人脸模型的Http请求
-        HttpRequest request = HttpUtil.createPost(createFaceModelUrl);
-        request.form("photo", FileUtil.file(path));//表单信息
-        HttpResponse response = request.execute(); //发送请求
-
-        String body = response.body();//接收响应
-        if ("无法识别出人脸".equals(body) || "照片中存在多张人脸".equals(body)) {
-            throw new EmosException(body);
-        } else {
-
-            TbFaceModel entity = new TbFaceModel();
-            entity.setUserId(userId);
-            entity.setFaceModel(body);
-
-            //向数据库写入人脸模型
-            faceModelDao.insert(entity);
-        }
-    */
     }
 
     /**
@@ -503,8 +398,8 @@ public class CheckinServiceImpl implements CheckinService {
     @Override
     public ArrayList<HashMap> searchWeekCheckin(HashMap param) {
         ArrayList<HashMap> checkinList = checkinDao.searchWeekCheckin(param); //获取本周的考勤情况
-        ArrayList<String> holidaysList = holidaysDao.searchHolidaysInRange(param);//查询本周特殊的节假日
-        ArrayList<String> workdayList = workdayDao.searchWorkdayInRange(param);//查询本周特殊的工作日
+        ArrayList holidaysList = holidaysDao.searchHolidaysInRange(param);//查询本周特殊的节假日
+        ArrayList workdayList = workdayDao.searchWorkdayInRange(param);//查询本周特殊的工作日
 
         DateTime startDate = DateUtil.parse(param.get("startDate").toString());//获取本周的开始日期
         DateTime endDate = DateUtil.parse(param.get("endDate").toString());//获取本周的结束日期
@@ -539,7 +434,7 @@ public class CheckinServiceImpl implements CheckinService {
                     }
 
                     //获取当天考勤结束时间
-                    DateTime endTime = DateUtil.parse(DateUtil.today() + "" + constants.attendanceEndTime);
+                    DateTime endTime = DateUtil.parse(DateUtil.today() + " " + constants.attendanceEndTime);
                     String today = DateUtil.today(); //获取当前日期
 
                     if (date.equals(today) && DateUtil.date().isBefore(endTime) && flag == false) {
@@ -559,6 +454,18 @@ public class CheckinServiceImpl implements CheckinService {
 
         });
         return list;
+    }
+
+    /**
+     * 查询用户月签到情况
+     *
+     * @param param
+     * @return
+     */
+    @Override
+    public ArrayList<HashMap> searchMonthCheckin(HashMap param) {
+
+        return this.searchWeekCheckin(param);
     }
 
 

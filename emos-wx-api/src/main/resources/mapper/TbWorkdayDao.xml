@@ -11,10 +11,8 @@
     <!--查询是否特殊工作日-->
     <select id="searchWorkdayInRange" parameterType="HashMap" resultType="String">
         select date
-        from tb_workday;
-        where date between
-        #{startDate}
-        and
-        #{endDate}
+        from tb_workday
+        where date between #{startDate}
+          and #{endDate}
     </select>
 </mapper>

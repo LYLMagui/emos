@@ -2,6 +2,7 @@ package com.ukir.emos.wx.service;
 
 import com.ukir.emos.wx.db.pojo.TbUser;
 
+import java.util.HashMap;
 import java.util.Set;
 
 /**
@@ -39,4 +40,12 @@ public interface UserService {
      */
     public String searchUserHiredate(int userId);
 
+
+
+    /**
+     * 查询用户概要信息
+     * @param userId
+     * @return 概要信息的Map集合
+     */
+    public HashMap searchUserSummary(int userId);
 }

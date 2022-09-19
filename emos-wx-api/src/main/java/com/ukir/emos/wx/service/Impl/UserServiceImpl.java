@@ -161,5 +161,17 @@ public class UserServiceImpl implements UserService {
         return hiredate;
     }
 
+    /**
+     * 查询用户概要信息
+     *
+     * @param userId
+     * @return 概要信息的Map集合
+     */
+    @Override
+    public HashMap searchUserSummary(int userId) {
+        HashMap map = userDao.searchUserSummary(userId);
+        return map;
+    }
+
 
 }

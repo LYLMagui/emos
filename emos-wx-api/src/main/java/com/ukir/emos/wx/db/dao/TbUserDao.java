@@ -50,4 +50,11 @@ public interface TbUserDao {
      */
     public String searchUserHiredate(int userId);
 
+    /**
+     * 查询用户概要信息
+     * @param userId
+     * @return 概要信息的Map集合
+     */
+    public HashMap searchUserSummary(int userId);
+
 }

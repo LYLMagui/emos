@@ -49,4 +49,13 @@ public interface CheckinService  {
      */
     public ArrayList<HashMap> searchWeekCheckin(HashMap param);
 
+
+    /**
+     * 查询用户月签到情况
+     * @param param
+     * @return
+     */
+    public ArrayList<HashMap> searchMonthCheckin(HashMap param);
+
+
 }
