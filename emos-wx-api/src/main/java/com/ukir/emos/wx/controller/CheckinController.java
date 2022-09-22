@@ -181,7 +181,7 @@ public class CheckinController {
         String month = form.getMonth() < 10 ? "0" + form.getMonth() : form.getMonth().toString(); //月份小于10转成字符串时在前面加一个0，大于等于10则不用
 
         //获取某年某月的第一天
-        DateTime startDate = DateUtil.parse(form.getYear() + "-" + form.getMonth() + "-01");
+        DateTime startDate = DateUtil.parse(form.getYear() + "-" +form.getMonth()+ "-01");
         if (startDate.isBefore(DateUtil.beginOfMonth(hiredate))) { //员工入职前的日期不可查看
             throw new EmosException("只能查询入职当月即之后的数据");
         }

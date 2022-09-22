@@ -1,12 +1,15 @@
 package com.ukir.emos.wx.service.Impl;
 
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.ukir.emos.wx.db.dao.TbUserDao;
+import com.ukir.emos.wx.db.pojo.MessageEntity;
 import com.ukir.emos.wx.db.pojo.TbUser;
 import com.ukir.emos.wx.exception.EmosException;
 import com.ukir.emos.wx.service.UserService;
+import com.ukir.emos.wx.task.MessageTask;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,6 +40,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private TbUserDao userDao;
 
+    @Autowired
+    private MessageTask messageTask;
     /**
      * 获取openId
      * @param code
@@ -93,6 +98,15 @@ public class UserServiceImpl implements UserService {
                 userDao.insert(param); //插入记录
 
                 int id = userDao.searchIdByOpenId(openId);//查找主键值
+
+                //用户注册成功后系统发送消息
+                MessageEntity entity = new MessageEntity();
+                entity.setSenderId(0);
+                entity.setSenderName("系统消息");
+                entity.setUuid(IdUtil.simpleUUID()); // 设置UUID
+                entity.setMsg("欢迎您注册为超级管理员，请及时更新你的个人信息。");
+                entity.setSendTime(new Date());
+                messageTask.sendAsync(id+"",entity);
                 return id;
             }else {
                 throw new EmosException("超级管理员账号已存在");
@@ -131,9 +145,15 @@ public class UserServiceImpl implements UserService {
         if(id == null){
             throw new EmosException("用户不存在");
         }
-        //TODO 从消息队列中接收消息，转移到消息列表
 
-
+        //用户登录成功后系统发送消息
+        MessageEntity entity = new MessageEntity();
+        entity.setSenderId(0);
+        entity.setSenderName("系统消息");
+        entity.setUuid(IdUtil.simpleUUID()); // 设置UUID
+        entity.setMsg("欢迎回来，今天也请您为公司贡献全部力量吧！(*^▽^*)");
+        entity.setSendTime(new Date());
+        messageTask.sendAsync(id+"",entity);
         return id;
     }
 

@@ -32,4 +32,9 @@ public class MessageEntity implements Serializable { //序列化
 
     @Indexed
     private Date sendTime;
+
+
+    private String senderName;
+
+
 }
